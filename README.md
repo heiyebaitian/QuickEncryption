@@ -1,0 +1,2 @@
+# QuickEncryption
+QuickEncryption是一个Arduino的加解密库，继承了众多常用的加解密算法，提供简洁的调用接口以帮助用户快速实现加解密操作。
