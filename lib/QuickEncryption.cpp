@@ -57,9 +57,9 @@ String qe_md5(char *input,MD5_MODE md5_mode)
 {
   MD5_CTX md5_calc;
   unsigned char md5[16];
-  MD5Init(&md5_calc);
-	MD5Update(&md5_calc,(unsigned char *)input,strlen(input));
-	MD5Final(md5,&md5_calc);
+  MD5_Init(&md5_calc);
+	MD5_Update(&md5_calc,(unsigned char *)input,strlen(input));
+	MD5_Final(md5,&md5_calc);
   String md5String = "";
   for (int i = 0; i < 16; i++) {
     if (md5[i] < 0x10) {

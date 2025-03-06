@@ -1,3 +1,4 @@
+// 本代码参考来源：https://zhuanlan.zhihu.com/p/115270932
 #ifndef MD5_H
 #define MD5_H
 
@@ -60,10 +61,10 @@ typedef struct {
     unsigned char buffer[64];                         /* 输入数据缓冲区 */
   } MD5_CTX; //存放MD5算法相关信息的结构体定义
 
-void MD5Init (MD5_CTX *);
-void MD5Update(MD5_CTX *, unsigned char *, unsigned int);
-void MD5Final(unsigned char [16], MD5_CTX *);
-void MD5Transform(unsigned int [4], unsigned char [64]);
+void MD5_Init (MD5_CTX *);
+void MD5_Update(MD5_CTX *, unsigned char *, unsigned int);
+void MD5_Final(unsigned char [16], MD5_CTX *);
+void MD5_Transform(unsigned int [4], unsigned char [64]);
 void Encode(unsigned char *, unsigned int *, unsigned int);
 void Decode(unsigned int *, unsigned char *, unsigned int);
 

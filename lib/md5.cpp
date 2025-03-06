@@ -1,8 +1,6 @@
-// 本代码参考来源：https://zhuanlan.zhihu.com/p/115270932
-
 /*
 函数使用说明：
-先调用MD5Init初始化一个MD5_CTX类型结构体，再使用MD5Update计算MD5码，最后调用MD5Final获取
+先调用MD5_Init初始化一个MD5_CTX类型结构体，再使用MD5_Update计算MD5码，最后调用MD5_Final获取
 */
 #include"md5.h"
 
@@ -17,7 +15,7 @@ unsigned char PADDING[64] = {
 
 
 //MD5算法初始化操作
-void MD5Init (MD5_CTX *context)
+void MD5_Init (MD5_CTX *context)
 {
   //bit计数器清零
   context->count[0] = context->count[1] = 0;
@@ -29,7 +27,7 @@ void MD5Init (MD5_CTX *context)
 }
 
 //使用MD5算法对input的数据进行处理
-void MD5Update (MD5_CTX *context, unsigned char *input, unsigned int inputLen)
+void MD5_Update (MD5_CTX *context, unsigned char *input, unsigned int inputLen)
 {
   unsigned int i, index, partLen;
   //计算[已处理数据长度(byte) mod 64]
@@ -44,9 +42,9 @@ void MD5Update (MD5_CTX *context, unsigned char *input, unsigned int inputLen)
   //以512位数据为一组进行处理
   if (inputLen >= partLen) {
 	  memcpy(&context->buffer[index],input, partLen);
-	  MD5Transform (context->state, context->buffer);
+	  MD5_Transform (context->state, context->buffer);
 	  for (i = partLen; i + 63 < inputLen; i += 64)
-	      MD5Transform (context->state, &input[i]);
+	      MD5_Transform (context->state, &input[i]);
 	  index = 0;
   }
   else i = 0;
@@ -55,7 +53,7 @@ void MD5Update (MD5_CTX *context, unsigned char *input, unsigned int inputLen)
 }
 
 //获取MD5码（由digest返回），顺便清除context数据
-void MD5Final (unsigned char digest[16], MD5_CTX *context)
+void MD5_Final (unsigned char digest[16], MD5_CTX *context)
 {
   unsigned char bits[8];
   unsigned int index, padLen;
@@ -64,9 +62,9 @@ void MD5Final (unsigned char digest[16], MD5_CTX *context)
   //填充数据
   index = (unsigned int)((context->count[0] >> 3) & 0x3f);
   padLen = (index < 56) ? (56 - index) : (120 - index);
-  MD5Update (context, PADDING, padLen);
+  MD5_Update (context, PADDING, padLen);
   //追加数据长度信息
-  MD5Update (context, bits, 8);
+  MD5_Update (context, bits, 8);
   //获取MD5码。其实就是将ABCD四个32位整数以16进制方式级联
   Encode (digest, context->state, 16);
   //清除数据
@@ -74,7 +72,7 @@ void MD5Final (unsigned char digest[16], MD5_CTX *context)
 }
 
 //MD5变换函数
-void MD5Transform (unsigned int state[4], unsigned char block[64])
+void MD5_Transform (unsigned int state[4], unsigned char block[64])
 {
   unsigned int a = state[0], b = state[1], c = state[2], d = state[3], x[16];
   //将64字节的一组数据进一步划分为16个子分组
