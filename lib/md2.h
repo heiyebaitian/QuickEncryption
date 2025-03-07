@@ -9,6 +9,7 @@
 
 #ifndef QE_MD2_H
 #define QE_MD2_H
+#pragma once
 #include <stddef.h>
 #ifdef  __cplusplus
 extern "C" {
