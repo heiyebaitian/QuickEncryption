@@ -66,15 +66,6 @@ static const MD2_INT S[256] = {
     0xDB, 0x99, 0x8D, 0x33, 0x9F, 0x11, 0x83, 0x14,
 };
 
-typedef void *(*memset_t)(void *, int, size_t);
-
-static volatile memset_t memset_func = memset;
-
-void QE_cleanse(void *ptr, size_t len)
-{
-    memset_func(ptr, 0, len);
-}
-
 
 const char *MD2_options(void)
 {
@@ -160,7 +151,7 @@ static void md2_block(MD2_CTX *c, const unsigned char *d)
         t = (t + i) & 0xff;
     }
     memcpy(sp1, state, 16 * sizeof(MD2_INT));
-    QE_cleanse(state, 48 * sizeof(MD2_INT));
+    qe_cleanse(state, 48 * sizeof(MD2_INT));
 }
 
 int MD2_Final(unsigned char *md, MD2_CTX *c)
@@ -184,7 +175,7 @@ int MD2_Final(unsigned char *md, MD2_CTX *c)
 
     for (i = 0; i < 16; i++)
         md[i] = (UCHAR) (p1[i] & 0xff);
-    QE_cleanse(c, sizeof(*c));
+    qe_cleanse(c, sizeof(*c));
     return 1;
 }
 unsigned char *MD2(const unsigned char *d, size_t n, unsigned char *md)

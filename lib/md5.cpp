@@ -2,7 +2,11 @@
 函数使用说明：
 先调用MD5_Init初始化一个MD5_CTX类型结构体，再使用MD5_Update计算MD5码，最后调用MD5_Final获取
 */
-#include"md5.h"
+#include <string.h>
+#include <stdio.h>
+#include <Arduino.h>
+#include "func.h"
+#include "md5.h"
 
 
 //数据填充的内容
@@ -11,7 +15,6 @@ unsigned char PADDING[64] = {
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-
 
 
 //MD5算法初始化操作
@@ -68,7 +71,7 @@ void MD5_Final (unsigned char digest[16], MD5_CTX *context)
   //获取MD5码。其实就是将ABCD四个32位整数以16进制方式级联
   Encode (digest, context->state, 16);
   //清除数据
-  memset(context, 0, sizeof(*context));
+  qe_cleanse(context, sizeof(*context)); /* Security consideration */
 }
 
 //MD5变换函数
