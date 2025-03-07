@@ -4,46 +4,43 @@
 /* MD2计算函数
  * @param input 待计算的数据
  * @param md2_mode MD2输出模式，可选大小写模式，16/32长度模式
- * @return md2String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
+ * @return MD2String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
-String qe_md2(char *input,MD2_MODE md2_mode){
-  MD2_CTX md2_calc;
+String qe_MD2(char *input,MD2_MODE md2_mode){
   unsigned char md2[16];
-  MD2_Init(&md2_calc);
-	MD2_Update(&md2_calc,(unsigned char *)input,strlen(input));
-	MD2_Final(md2,&md2_calc);
-  String md2String = "";
+  MD2((unsigned char *)input,strlen(input),md2);
+  String MD2String = "";
   for (int i = 0; i < 16; i++) {
     if (md2[i] < 0x10) {
-      md2String += "0"; // 如果是单个十六进制数字，前面加0
+      MD2String += "0"; // 如果是单个十六进制数字，前面加0
     }
-    md2String += String(md2[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+    MD2String += String(md2[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
   }
 
   if(md2_mode == MD2_LOWERCASE_32L)
   {
-    return md2String;
+    return MD2String;
   }
 
   if(md2_mode == MD2_UPPERCASE_32L)
   {
-    md2String.toUpperCase();
-    return md2String;
+    MD2String.toUpperCase();
+    return MD2String;
   }
 
   if(md2_mode == MD2_LOWERCASE_16L)
   {
-    if (md2String.length() != 32) {return "ERROR";}
-    md2String = md2String.substring(8, 24);
-    return md2String;
+    if (MD2String.length() != 32) {return "ERROR";}
+    MD2String = MD2String.substring(8, 24);
+    return MD2String;
   }
 
   if(md2_mode == MD2_UPPERCASE_16L)
   {
-    if (md2String.length() != 32) {return "ERROR";}
-    md2String = md2String.substring(8, 24);
-    md2String.toUpperCase();
-    return md2String;
+    if (MD2String.length() != 32) {return "ERROR";}
+    MD2String = MD2String.substring(8, 24);
+    MD2String.toUpperCase();
+    return MD2String;
   }
   else return "NULL";
 }

@@ -20,7 +20,7 @@ typedef enum
 } MD5_MODE;
 
 
-String qe_md2(char *input,MD2_MODE md2_mode);
+String qe_MD2(char *input,MD2_MODE md2_mode);
 String qe_md5(char *input,MD5_MODE md5_mode);
 
 
