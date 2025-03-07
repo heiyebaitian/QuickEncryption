@@ -1,6 +1,7 @@
 // 本代码参考来源：https://zhuanlan.zhihu.com/p/115270932
 #ifndef MD5_H
 #define MD5_H
+#pragma once
 
 #include<string.h>
 #include<stdio.h>
