@@ -1,3 +1,18 @@
+/*
+ * Copyright 2025 The QuickEncryption Project Authors. All Rights Reserved.
+ *
+ * Licensed under the Apache License 2.0 (the "License").  You may not use
+ * this file except in compliance with the License.  You can obtain a copy
+ * in the file LICENSE in the source distribution
+ */
+
+/*
+ * 本程序提供了QuickEncryption库的多项基准测试功能，您可以使用此程序快速对目标平台的基准性能进行评估
+ * 本程序将配合QuickEncryption库同步更新，您在编译本程序前请确保库版本为最新版本，以防止产生性能误差
+ * 较新的库版本可能会提供更好的性能优化、安全优化、硬件加速适配等内容
+ * 更新日期：2025年3月7日
+ */
+
 #include<Arduino.h>
 #include "QuickEncryption.h"
 
