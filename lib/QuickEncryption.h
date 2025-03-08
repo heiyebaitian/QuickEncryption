@@ -40,6 +40,8 @@ String qe_MD2_str(String input,QE_MD2_MODE md2_mode);
 int qe_MD2_char(char *input, char *output, size_t outputSize,QE_MD2_MODE md2_mode);
 String qe_MD2(char *input,QE_MD2_MODE md2_mode);
 
+String qe_MD5_str(String input,QE_MD5_MODE md5_mode);
+int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mode);
 String qe_MD5(char *input,QE_MD5_MODE md5_mode);
 
 
