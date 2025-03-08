@@ -26,6 +26,7 @@ void setup() {
   Serial.print("\n");
 
   // 传入 String 输出 String
+  // 注意：此方法存在输入长度限制，限制项在QuickEncryption.h 的 #define MD2_INPUT_MAX 中更改
   Serial.print("\nqe_MD2_str()\n");
 	Serial.print(qe_MD2_str(text2,MD2_LOWERCASE_32L));
   Serial.print("\n");
