@@ -10,7 +10,7 @@
  * 本程序提供了QuickEncryption库的多项基准测试功能，您可以使用此程序快速对目标平台的基准性能进行评估
  * 本程序将配合QuickEncryption库同步更新，您在编译本程序前请确保库版本为最新版本，以防止产生性能误差
  * 较新的库版本可能会提供更好的性能优化、安全优化、硬件加速适配等内容
- * 更新日期：2025年3月7日
+ * 更新日期：2025年3月9日
  */
 
 #include<Arduino.h>
@@ -18,6 +18,7 @@
 
 #define TEXT_LENGTH 64
 #define MD2_CYCLE_NUMBER 10000
+#define MD4_CYCLE_NUMBER 20000
 #define MD5_CYCLE_NUMBER 20000
 
 
@@ -28,6 +29,7 @@
 int self_checking(){
   char text1[]={"6RZQ5vaxQ9hE#sLyk5eCLdCfA*RU38T%8fbXfcGz&Kxgy*!VN8BDtXv^w3#iSGXw"};
   const String md2_ev = "8c6fba25efe107b6972bc114f507a8e0";
+  const String md4_ev = "1dda25c7373a4023981b27252046474d";
   const String md5_ev = "1cc6e3b39dc22371248d9d362a36f36d";
   if(qe_MD2(text1,MD2_LOWERCASE_32L) != md2_ev) 
   {
@@ -35,6 +37,14 @@ int self_checking(){
     Serial.printf("Source text:%s\n", text1);
     Serial.println("Expected value:" + md2_ev);
     Serial.println("Actual value:" + qe_MD2(text1,MD2_LOWERCASE_32L));
+    return 1;
+  }
+  if(qe_MD4(text1,MD4_LOWERCASE_32L) != md4_ev)
+  {
+    Serial.print("[QE_Benchmark] MD4 Self-check error!\n");
+    Serial.printf("Source text:%s\n", text1);
+    Serial.println("Expected value:" + md4_ev);
+    Serial.println("Actual value:" + qe_MD4(text1,MD4_LOWERCASE_32L));
     return 1;
   }
   if(qe_MD5(text1,MD5_LOWERCASE_32L) != md5_ev)
@@ -90,6 +100,19 @@ int QE_Benchmark(){
   MD2_time = micros() - MD2_time;
   MD2_rate = (TEXT_LENGTH * MD2_CYCLE_NUMBER * 2 / 1024.0) / (MD2_time/1000000.0); // 计算速率
   Serial.printf("MD2:%lf KB/S\n",MD2_rate);
+
+  /* MD4 测试*/
+  unsigned long MD4_time = micros();
+  double MD4_rate = 0;
+  for(int i=0; i <= MD4_CYCLE_NUMBER; i++){
+    text = RandomString(TEXT_LENGTH); // 生成长度 TEXT_LENGTH 的随机字符串
+    text.toCharArray(char_text, text.length() + 1); 
+    buffer = qe_MD4( char_text, MD4_LOWERCASE_32L); // 计算MD4值存入缓冲区
+    if(buffer != qe_MD4( char_text, MD4_LOWERCASE_32L)) return 1; // 再次计算并校验结果
+  }
+  MD4_time = micros() - MD4_time;
+  MD4_rate = (TEXT_LENGTH * MD4_CYCLE_NUMBER * 2 / 1024.0) / (MD4_time/1000000.0); // 计算速率
+  Serial.printf("MD4:%lf KB/S\n",MD4_rate);
 
   /* MD5 测试*/
   unsigned long MD5_time = micros();
