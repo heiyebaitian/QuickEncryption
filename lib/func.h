@@ -6,8 +6,8 @@
  * in the file LICENSE in the source distribution
  */
 
-#ifndef QE_FUNC_H
-#define QE_FUNC_H
+#ifndef __QE_FUNC__H
+#define __QE_FUNC__H
 #pragma once
 
 void qe_cleanse(void *ptr, size_t len);

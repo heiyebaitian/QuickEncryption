@@ -1,6 +1,6 @@
 // 本代码参考来源：https://zhuanlan.zhihu.com/p/115270932
-#ifndef MD5_H
-#define MD5_H
+#ifndef __QE_MD5__H
+#define __QE_MD5__H
 #pragma once
 
 #include<string.h>
@@ -24,33 +24,33 @@
 #define S43 15
 #define S44 21
 
-//F,G,H,I四个非线性变换函数
-#define F(x, y, z) (((x) & (y)) | ((~x) & (z)))
-#define G(x, y, z) (((x) & (z)) | ((y) & (~z)))
-#define H(x, y, z) ((x) ^ (y) ^ (z))
-#define I(x, y, z) ((y) ^ ((x) | (~z)))
+//QE_MD5_F,QE_MD5_G,QE_MD5_H,I四个非线性变换函数
+#define QE_MD5_F(x, y, z) (((x) & (y)) | ((~x) & (z)))
+#define QE_MD5_G(x, y, z) (((x) & (z)) | ((y) & (~z)))
+#define QE_MD5_H(x, y, z) ((x) ^ (y) ^ (z))
+#define QE_MD5_I(x, y, z) ((y) ^ ((x) | (~z)))
 
 //x循环左移n位的操作
 #define ROTATE_LEFT(x, n) (((x) << (n)) | ((x) >> (32-(n))))
 
 //FF,GG,HH,II是四轮循环变换分别用到的变换函数
 #define FF(a, b, c, d, x, s, ac) { \
- (a) += F ((b), (c), (d)) + (x) + (unsigned int)(ac); \
+ (a) += QE_MD5_F ((b), (c), (d)) + (x) + (unsigned int)(ac); \
  (a) = ROTATE_LEFT ((a), (s)); \
  (a) += (b); \
   }
 #define GG(a, b, c, d, x, s, ac) { \
- (a) += G ((b), (c), (d)) + (x) + (unsigned int)(ac); \
+ (a) += QE_MD5_G ((b), (c), (d)) + (x) + (unsigned int)(ac); \
  (a) = ROTATE_LEFT ((a), (s)); \
  (a) += (b); \
   }
 #define HH(a, b, c, d, x, s, ac) { \
- (a) += H ((b), (c), (d)) + (x) + (unsigned int)(ac); \
+ (a) += QE_MD5_H ((b), (c), (d)) + (x) + (unsigned int)(ac); \
  (a) = ROTATE_LEFT ((a), (s)); \
  (a) += (b); \
   }
 #define II(a, b, c, d, x, s, ac) { \
- (a) += I ((b), (c), (d)) + (x) + (unsigned int)(ac); \
+ (a) += QE_MD5_I ((b), (c), (d)) + (x) + (unsigned int)(ac); \
  (a) = ROTATE_LEFT ((a), (s)); \
  (a) += (b); \
   }
