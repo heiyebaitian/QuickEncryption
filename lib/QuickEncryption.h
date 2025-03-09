@@ -18,6 +18,7 @@
 #include "md5.h"
 
 #define MD2_INPUT_MAX 64
+#define MD4_INPUT_MAX 64
 #define MD5_INPUT_MAX 64
 
 typedef enum
@@ -41,16 +42,18 @@ typedef enum
 } QE_MD5_MODE;
 
 
-
+String qe_MD2(char *input,QE_MD2_MODE md2_mode);
 String qe_MD2_str(String input,QE_MD2_MODE md2_mode);
 int qe_MD2_char(char *input, char *output, size_t outputSize,QE_MD2_MODE md2_mode);
-String qe_MD2(char *input,QE_MD2_MODE md2_mode);
 
 String qe_MD4(char *input,QE_MD4_MODE md4_mode);
+String qe_MD4_str(String input, QE_MD4_MODE md4_mode);
+int qe_MD4_char(char *input, char *output, size_t outputSize,QE_MD4_MODE MD4_mode);
 
+String qe_MD5(char *input,QE_MD5_MODE md5_mode);
 String qe_MD5_str(String input,QE_MD5_MODE md5_mode);
 int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mode);
-String qe_MD5(char *input,QE_MD5_MODE md5_mode);
+
 
 
 #endif //QUICK_ENCRYPTION_H  

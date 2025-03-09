@@ -358,7 +358,8 @@ int MD4_Final(unsigned char *md, MD4_CTX *c)
         c->last.used++;
 
         /* padding 0s */
-        memset(&c->last.buf[c->last.used], 0, HASH_BLOCK_SIZE - HASH_LEN_SIZE - c->last.used);
+        qe_cleanse(&c->last.buf[c->last.used], HASH_BLOCK_SIZE - HASH_LEN_SIZE - c->last.used); /* Security consideration */
+        //memset(&c->last.buf[c->last.used], 0, HASH_BLOCK_SIZE - HASH_LEN_SIZE - c->last.used);
 
         /* save length */
         temp = (uint32_t *)&(c->last.buf[HASH_LEN_OFFSET]);
