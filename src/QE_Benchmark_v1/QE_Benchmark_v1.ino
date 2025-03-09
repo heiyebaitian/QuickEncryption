@@ -72,7 +72,7 @@ String RandomString(int length) {
  */
 int QE_Benchmark(){
   randomSeed(analogRead(0) + micros()); // 设置随机数种子为 不使用的引脚读取一个模拟量并加上当前系统运行时间
-  String buff = "";
+  String buffer = "";
   String text = "";
   char char_text[TEXT_LENGTH+1] = {};
 
@@ -84,8 +84,8 @@ int QE_Benchmark(){
   for(int i=0; i <= MD2_CYCLE_NUMBER; i++){
     text = RandomString(TEXT_LENGTH); // 生成长度 TEXT_LENGTH 的随机字符串
     text.toCharArray(char_text, text.length() + 1); 
-    buff = qe_MD2( char_text, MD2_LOWERCASE_32L); // 计算MD2值存入缓冲区
-    if(buff != qe_MD2( char_text, MD2_LOWERCASE_32L)) return 1; // 再次计算并校验结果
+    buffer = qe_MD2( char_text, MD2_LOWERCASE_32L); // 计算MD2值存入缓冲区
+    if(buffer != qe_MD2( char_text, MD2_LOWERCASE_32L)) return 1; // 再次计算并校验结果
   }
   MD2_time = micros() - MD2_time;
   MD2_rate = (TEXT_LENGTH * MD2_CYCLE_NUMBER * 2 / 1024.0) / (MD2_time/1000000.0); // 计算速率
@@ -97,8 +97,8 @@ int QE_Benchmark(){
   for(int i=0; i <= MD5_CYCLE_NUMBER; i++){
     text = RandomString(TEXT_LENGTH); // 生成长度 TEXT_LENGTH 的随机字符串
     text.toCharArray(char_text, text.length() + 1); 
-    buff = qe_MD5( char_text, MD5_LOWERCASE_32L); // 计算MD5值存入缓冲区
-    if(buff != qe_MD5( char_text, MD5_LOWERCASE_32L)) return 1; // 再次计算并校验结果
+    buffer = qe_MD5( char_text, MD5_LOWERCASE_32L); // 计算MD5值存入缓冲区
+    if(buffer != qe_MD5( char_text, MD5_LOWERCASE_32L)) return 1; // 再次计算并校验结果
   }
   MD5_time = micros() - MD5_time;
   MD5_rate = (TEXT_LENGTH * MD5_CYCLE_NUMBER * 2 / 1024.0) / (MD5_time/1000000.0); // 计算速率

@@ -14,6 +14,7 @@
 #include <stdint.h>
 
 #include "md2.h"
+#include "md4.h"
 #include "md5.h"
 
 #define MD2_INPUT_MAX 64
@@ -31,6 +32,11 @@ typedef enum
 
 typedef enum
 {
+      MD4_LOWERCASE_32L=1, MD4_UPPERCASE_32L, MD4_LOWERCASE_16L, MD4_UPPERCASE_16L
+} QE_MD4_MODE;
+
+typedef enum
+{
       MD5_LOWERCASE_32L=1, MD5_UPPERCASE_32L, MD5_LOWERCASE_16L, MD5_UPPERCASE_16L
 } QE_MD5_MODE;
 
@@ -39,6 +45,8 @@ typedef enum
 String qe_MD2_str(String input,QE_MD2_MODE md2_mode);
 int qe_MD2_char(char *input, char *output, size_t outputSize,QE_MD2_MODE md2_mode);
 String qe_MD2(char *input,QE_MD2_MODE md2_mode);
+
+String qe_MD4(char *input,QE_MD4_MODE md4_mode);
 
 String qe_MD5_str(String input,QE_MD5_MODE md5_mode);
 int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mode);

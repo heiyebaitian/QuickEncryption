@@ -166,6 +166,57 @@ String qe_MD2(char *input,QE_MD2_MODE md2_mode){
   else return "NULL";
 }
 
+
+
+/* MD4计算函数
+ * @param input 待计算的数据
+ * @param md4_mode MD4输出模式，可选大小写模式，16/32长度模式
+ * @return MD4String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
+ */
+String qe_MD4(char *input,QE_MD4_MODE md4_mode){
+  unsigned char md4[16];
+  MD4((unsigned char *)input,strlen(input),md4);
+
+  // 将输出结果转换为16进制字符串
+  String MD4String = "";
+  for (int i = 0; i < 16; i++) {
+    if (md4[i] < 0x10) {
+      MD4String += "0"; // 如果是单个十六进制数字，前面加0
+    }
+    MD4String += String(md4[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+  }
+
+  // 输出模式处理
+  if(md4_mode == MD4_LOWERCASE_32L)
+  {
+    return MD4String;
+  }
+
+  if(md4_mode == MD4_UPPERCASE_32L)
+  {
+    MD4String.toUpperCase();
+    return MD4String;
+  }
+
+  if(md4_mode == MD4_LOWERCASE_16L)
+  {
+    if (MD4String.length() != 32) {return "ERROR";}
+    MD4String = MD4String.substring(8, 24);
+    return MD4String;
+  }
+
+  if(md4_mode == MD4_UPPERCASE_16L)
+  {
+    if (MD4String.length() != 32) {return "ERROR";}
+    MD4String = MD4String.substring(8, 24);
+    MD4String.toUpperCase();
+    return MD4String;
+  }
+  else return "NULL";
+}
+
+
+
 /* MD5计算函数 String输入输出
  * @param input 待计算的数据
  * @param md5_mode MD5输出模式，可选大小写模式，16/32长度模式
@@ -221,6 +272,8 @@ String qe_MD5_str(String input,QE_MD5_MODE md5_mode)
   }
   else return "NULL";
 }
+
+
 
 /* MD5计算函数 char输入输出
  * @param input 待计算的数据

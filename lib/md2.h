@@ -7,10 +7,12 @@
  * https://www.openssl.org/source/license.html
  */
 
-#ifndef QE_MD2_H
-#define QE_MD2_H
+#ifndef __QE_MD2__H
+#define __QE_MD2__H
 #pragma once
+
 #include <stddef.h>
+
 #ifdef  __cplusplus
 extern "C" {
 #endif
