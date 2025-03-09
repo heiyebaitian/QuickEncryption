@@ -341,6 +341,15 @@ String qe_MD4(char *input,QE_MD4_MODE md4_mode){
  */
 String qe_MD5_str(String input,QE_MD5_MODE md5_mode)
 {
+#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+  // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
+  MD5Builder md5;
+  md5.begin();
+  md5.add(input);
+  md5.calculate();
+  String MD5String = md5.toString();
+
+#else
   if(input.length() > MD5_INPUT_MAX) return "ERROR"; // 如果传入字符串超过最大输入上限则返回
   MD5_CTX md5_calc;
   unsigned char md5[16];
@@ -360,6 +369,8 @@ String qe_MD5_str(String input,QE_MD5_MODE md5_mode)
     }
     MD5String += String(md5[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
   }
+
+#endif
 
   // 输出模式处理
   if(md5_mode == MD5_LOWERCASE_32L)
@@ -401,6 +412,15 @@ String qe_MD5_str(String input,QE_MD5_MODE md5_mode)
  */
 int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mode)
 {
+#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+  // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
+  MD5Builder md5;
+  md5.begin();
+  md5.add(String(input));
+  md5.calculate();
+  String MD5String = md5.toString();
+
+#else
   MD5_CTX md5_calc;
   unsigned char md5[16];
 
@@ -417,6 +437,8 @@ int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mo
     }
     MD5String += String(md5[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
   }
+
+#endif
 
   // 输出模式处理
   if(md5_mode == MD5_LOWERCASE_32L)
@@ -464,6 +486,15 @@ int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mo
  */
 String qe_MD5(char *input,QE_MD5_MODE md5_mode)
 {
+#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+  // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
+  MD5Builder md5;
+  md5.begin();
+  md5.add(String(input));
+  md5.calculate();
+  String MD5String = md5.toString();
+
+#else
   MD5_CTX md5_calc;
   unsigned char md5[16];
 
@@ -480,6 +511,8 @@ String qe_MD5(char *input,QE_MD5_MODE md5_mode)
     }
     MD5String += String(md5[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
   }
+
+#endif
 
   // 输出模式处理
   if(md5_mode == MD5_LOWERCASE_32L)

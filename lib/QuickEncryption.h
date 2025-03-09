@@ -7,8 +7,10 @@
  */
 
 // QuickEncryption.h
-#ifndef QUICK_ENCRYPTION_H  
-#define QUICK_ENCRYPTION_H
+#ifndef __QUICK_ENCRYPTION__H  
+#define __QUICK_ENCRYPTION__H
+
+#define QE_ESP32_METHOD 0
 
 #include <Arduino.h>
 #include <stdint.h>
@@ -17,9 +19,20 @@
 #include "md4.h"
 #include "md5.h"
 
+/* MD5计算加速优化 */
+#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+  // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
+  #warning You have enabled the ESP32-specific MD5 method, which is in the experimental stage. Do not enable this unless you understand the consequences of doing so.
+  #include "MD5Builder.h"
+#endif
+
+
+
 #define MD2_INPUT_MAX 64
 #define MD4_INPUT_MAX 64
 #define MD5_INPUT_MAX 64
+
+
 
 typedef enum
 {
@@ -40,6 +53,8 @@ typedef enum
 {
       MD5_LOWERCASE_32L=1, MD5_UPPERCASE_32L, MD5_LOWERCASE_16L, MD5_UPPERCASE_16L
 } QE_MD5_MODE;
+
+
 
 
 String qe_MD2(char *input,QE_MD2_MODE md2_mode);
