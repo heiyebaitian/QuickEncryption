@@ -143,7 +143,8 @@ int MD4_Init(MD4_CTX *c)
         return ERR_INV_PARAM;
     }
 
-    memset(c, 0, sizeof(MD4_CTX));
+    qe_cleanse(c, sizeof(MD4_CTX)); /* Security consideration */
+    //memset(c, 0, sizeof(MD4_CTX));
 
     /* MD4 Initial Value, refer rfc1320, section 3.3 */
     c->hash.a = 0x67452301; /* little endian */
@@ -285,7 +286,8 @@ int MD4_Update(MD4_CTX *c, const void *data, unsigned long len)
             len -= copy_len;
 
             /* reset context buffer */
-            memset(&c->last.buf[0], 0, HASH_BLOCK_SIZE);
+            qe_cleanse(&c->last.buf[0], HASH_BLOCK_SIZE); /* Security consideration */
+            //memset(&c->last.buf[0], 0, HASH_BLOCK_SIZE);
             c->last.used = 0;
         }
     }
@@ -336,10 +338,12 @@ int MD4_Final(unsigned char *md, MD4_CTX *c)
         c->last.buf[c->last.used] = HASH_PADDING_PATTERN;
         c->last.used++;
 
-        memset(&c->last.buf[c->last.used], 0, HASH_BLOCK_SIZE - c->last.used);
+        qe_cleanse(&c->last.buf[c->last.used], HASH_BLOCK_SIZE - c->last.used); /* Security consideration */
+        //memset(&c->last.buf[c->last.used], 0, HASH_BLOCK_SIZE - c->last.used);
         MD4_ProcessBlock(c, &c->last.buf);
 
-        memset(&c->last.buf[0], 0, HASH_BLOCK_SIZE - HASH_LEN_SIZE);
+        qe_cleanse(&c->last.buf[0], HASH_BLOCK_SIZE - HASH_LEN_SIZE); /* Security consideration */
+        //memset(&c->last.buf[0], 0, HASH_BLOCK_SIZE - HASH_LEN_SIZE);
         c->last.used = 0;
 
         /* save length */
