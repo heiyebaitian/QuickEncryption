@@ -8,6 +8,55 @@
 
 #include "QuickEncryption.h"
 
+/* MD2计算函数
+ * @param input 待计算的数据
+ * @param md2_mode MD2输出模式，可选大小写模式，16/32长度模式
+ * @return MD2String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
+ */
+String qe_MD2(char *input,QE_MD2_MODE md2_mode){
+  unsigned char md2[16];
+  MD2((unsigned char *)input,strlen(input),md2);
+
+  // 将输出结果转换为16进制字符串
+  String MD2String = "";
+  for (int i = 0; i < 16; i++) {
+    if (md2[i] < 0x10) {
+      MD2String += "0"; // 如果是单个十六进制数字，前面加0
+    }
+    MD2String += String(md2[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+  }
+
+  // 输出模式处理
+  if(md2_mode == MD2_LOWERCASE_32L)
+  {
+    return MD2String;
+  }
+
+  if(md2_mode == MD2_UPPERCASE_32L)
+  {
+    MD2String.toUpperCase();
+    return MD2String;
+  }
+
+  if(md2_mode == MD2_LOWERCASE_16L)
+  {
+    if (MD2String.length() != 32) {return "ERROR";}
+    MD2String = MD2String.substring(8, 24);
+    return MD2String;
+  }
+
+  if(md2_mode == MD2_UPPERCASE_16L)
+  {
+    if (MD2String.length() != 32) {return "ERROR";}
+    MD2String = MD2String.substring(8, 24);
+    MD2String.toUpperCase();
+    return MD2String;
+  }
+  else return "NULL";
+}
+
+
+
 /* MD2计算函数 String输入输出
  * @param input 待计算的数据
  * @param md2_mode MD2输出模式，可选大小写模式，16/32长度模式
@@ -122,49 +171,49 @@ int qe_MD2_char(char *input, char *output, size_t outputSize,QE_MD2_MODE md2_mod
 
 
 
-/* MD2计算函数
+/* MD4计算函数
  * @param input 待计算的数据
- * @param md2_mode MD2输出模式，可选大小写模式，16/32长度模式
- * @return MD2String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
+ * @param md4_mode MD4输出模式，可选大小写模式，16/32长度模式
+ * @return MD4String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
-String qe_MD2(char *input,QE_MD2_MODE md2_mode){
-  unsigned char md2[16];
-  MD2((unsigned char *)input,strlen(input),md2);
+String qe_MD4(char *input,QE_MD4_MODE md4_mode){
+  unsigned char md4[16];
+  MD4((unsigned char *)input,strlen(input),md4);
 
   // 将输出结果转换为16进制字符串
-  String MD2String = "";
+  String MD4String = "";
   for (int i = 0; i < 16; i++) {
-    if (md2[i] < 0x10) {
-      MD2String += "0"; // 如果是单个十六进制数字，前面加0
+    if (md4[i] < 0x10) {
+      MD4String += "0"; // 如果是单个十六进制数字，前面加0
     }
-    MD2String += String(md2[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+    MD4String += String(md4[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
   }
 
   // 输出模式处理
-  if(md2_mode == MD2_LOWERCASE_32L)
+  if(md4_mode == MD4_LOWERCASE_32L)
   {
-    return MD2String;
+    return MD4String;
   }
 
-  if(md2_mode == MD2_UPPERCASE_32L)
+  if(md4_mode == MD4_UPPERCASE_32L)
   {
-    MD2String.toUpperCase();
-    return MD2String;
+    MD4String.toUpperCase();
+    return MD4String;
   }
 
-  if(md2_mode == MD2_LOWERCASE_16L)
+  if(md4_mode == MD4_LOWERCASE_16L)
   {
-    if (MD2String.length() != 32) {return "ERROR";}
-    MD2String = MD2String.substring(8, 24);
-    return MD2String;
+    if (MD4String.length() != 32) {return "ERROR";}
+    MD4String = MD4String.substring(8, 24);
+    return MD4String;
   }
 
-  if(md2_mode == MD2_UPPERCASE_16L)
+  if(md4_mode == MD4_UPPERCASE_16L)
   {
-    if (MD2String.length() != 32) {return "ERROR";}
-    MD2String = MD2String.substring(8, 24);
-    MD2String.toUpperCase();
-    return MD2String;
+    if (MD4String.length() != 32) {return "ERROR";}
+    MD4String = MD4String.substring(8, 24);
+    MD4String.toUpperCase();
+    return MD4String;
   }
   else return "NULL";
 }
@@ -285,49 +334,65 @@ int qe_MD4_char(char *input, char *output, size_t outputSize,QE_MD4_MODE md4_mod
 
 
 
-/* MD4计算函数
+/* MD5计算函数
  * @param input 待计算的数据
- * @param md4_mode MD4输出模式，可选大小写模式，16/32长度模式
- * @return MD4String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
+ * @param md5_mode MD5输出模式，可选大小写模式，16/32长度模式
+ * @return MD5String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
-String qe_MD4(char *input,QE_MD4_MODE md4_mode){
-  unsigned char md4[16];
-  MD4((unsigned char *)input,strlen(input),md4);
+String qe_MD5(char *input,QE_MD5_MODE md5_mode){
+  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+    // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
+    MD5Builder md5;
+    md5.begin();
+    md5.add(String(input));
+    md5.calculate();
+    String MD5String = md5.toString();
 
-  // 将输出结果转换为16进制字符串
-  String MD4String = "";
-  for (int i = 0; i < 16; i++) {
-    if (md4[i] < 0x10) {
-      MD4String += "0"; // 如果是单个十六进制数字，前面加0
+  #else
+    MD5_CTX md5_calc;
+    unsigned char md5[16];
+
+    // 计算MD5
+    MD5_Init(&md5_calc);
+	  MD5_Update(&md5_calc,(unsigned char *)input,strlen(input));
+	  MD5_Final(md5,&md5_calc);
+  
+    // 将输出结果转换为16进制字符串
+    String MD5String = "";
+    for (int i = 0; i < 16; i++) {
+      if (md5[i] < 0x10) {
+        MD5String += "0"; // 如果是单个十六进制数字，前面加0
+      }
+      MD5String += String(md5[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
     }
-    MD4String += String(md4[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
-  }
+
+  #endif
 
   // 输出模式处理
-  if(md4_mode == MD4_LOWERCASE_32L)
+  if(md5_mode == MD5_LOWERCASE_32L)
   {
-    return MD4String;
+    return MD5String;
   }
 
-  if(md4_mode == MD4_UPPERCASE_32L)
+  if(md5_mode == MD5_UPPERCASE_32L)
   {
-    MD4String.toUpperCase();
-    return MD4String;
+    MD5String.toUpperCase();
+    return MD5String;
   }
 
-  if(md4_mode == MD4_LOWERCASE_16L)
+  if(md5_mode == MD5_LOWERCASE_16L)
   {
-    if (MD4String.length() != 32) {return "ERROR";}
-    MD4String = MD4String.substring(8, 24);
-    return MD4String;
+    if (MD5String.length() != 32) {return "ERROR";}
+    MD5String = MD5String.substring(8, 24);
+    return MD5String;
   }
 
-  if(md4_mode == MD4_UPPERCASE_16L)
+  if(md5_mode == MD5_UPPERCASE_16L)
   {
-    if (MD4String.length() != 32) {return "ERROR";}
-    MD4String = MD4String.substring(8, 24);
-    MD4String.toUpperCase();
-    return MD4String;
+    if (MD5String.length() != 32) {return "ERROR";}
+    MD5String = MD5String.substring(8, 24);
+    MD5String.toUpperCase();
+    return MD5String;
   }
   else return "NULL";
 }
@@ -339,38 +404,37 @@ String qe_MD4(char *input,QE_MD4_MODE md4_mode){
  * @param md5_mode MD5输出模式，可选大小写模式，16/32长度模式
  * @return MD5String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
-String qe_MD5_str(String input,QE_MD5_MODE md5_mode)
-{
-#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+String qe_MD5_str(String input,QE_MD5_MODE md5_mode){
+  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
   // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
-  MD5Builder md5;
-  md5.begin();
-  md5.add(input);
-  md5.calculate();
-  String MD5String = md5.toString();
+    MD5Builder md5;
+    md5.begin();
+    md5.add(input);
+    md5.calculate();
+    String MD5String = md5.toString();
 
-#else
+  #else
   if(input.length() > MD5_INPUT_MAX) return "ERROR"; // 如果传入字符串超过最大输入上限则返回
-  MD5_CTX md5_calc;
-  unsigned char md5[16];
-  char input_char[MD5_INPUT_MAX  + 1]= {};
+    MD5_CTX md5_calc;
+    unsigned char md5[16];
+    char input_char[MD5_INPUT_MAX  + 1]= {};
 
-  input.toCharArray(input_char, input.length() + 1);  // 将输入数据String类型转换为char类型
-  // 计算MD5
-  MD5_Init(&md5_calc);
-	MD5_Update(&md5_calc,(unsigned char *)input_char,strlen(input_char));
-	MD5_Final(md5,&md5_calc);
+    input.toCharArray(input_char, input.length() + 1);  // 将输入数据String类型转换为char类型
+    // 计算MD5
+    MD5_Init(&md5_calc);
+	  MD5_Update(&md5_calc,(unsigned char *)input_char,strlen(input_char));
+	  MD5_Final(md5,&md5_calc);
   
-  // 将输出结果转换为16进制字符串
-  String MD5String = "";
-  for (int i = 0; i < 16; i++) {
-    if (md5[i] < 0x10) {
-      MD5String += "0"; // 如果是单个十六进制数字，前面加0
+    // 将输出结果转换为16进制字符串
+    String MD5String = "";
+    for (int i = 0; i < 16; i++) {
+      if (md5[i] < 0x10) {
+        MD5String += "0"; // 如果是单个十六进制数字，前面加0
+      }
+      MD5String += String(md5[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
     }
-    MD5String += String(md5[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
-  }
 
-#endif
+  #endif
 
   // 输出模式处理
   if(md5_mode == MD5_LOWERCASE_32L)
@@ -410,35 +474,34 @@ String qe_MD5_str(String input,QE_MD5_MODE md5_mode)
  * @param md5_mode MD5输出模式，可选大小写模式，16/32长度模式
  * @return QE_RETURN_STATE 函数处理状态
  */
-int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mode)
-{
-#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
-  // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
-  MD5Builder md5;
-  md5.begin();
-  md5.add(String(input));
-  md5.calculate();
-  String MD5String = md5.toString();
+int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mode){
+  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+    // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
+    MD5Builder md5;
+    md5.begin();
+    md5.add(String(input));
+    md5.calculate();
+    String MD5String = md5.toString();
 
-#else
-  MD5_CTX md5_calc;
-  unsigned char md5[16];
+  #else
+    MD5_CTX md5_calc;
+    unsigned char md5[16];
 
-  // 计算MD5
-  MD5_Init(&md5_calc);
-	MD5_Update(&md5_calc,(unsigned char *)input,strlen(input));
-	MD5_Final(md5,&md5_calc);
+    // 计算MD5
+    MD5_Init(&md5_calc);
+	  MD5_Update(&md5_calc,(unsigned char *)input,strlen(input));
+	  MD5_Final(md5,&md5_calc);
   
-  // 将输出结果转换为16进制字符串
-  String MD5String = "";
-  for (int i = 0; i < 16; i++) {
-    if (md5[i] < 0x10) {
-      MD5String += "0"; // 如果是单个十六进制数字，前面加0
+    // 将输出结果转换为16进制字符串
+    String MD5String = "";
+    for (int i = 0; i < 16; i++) {
+      if (md5[i] < 0x10) {
+        MD5String += "0"; // 如果是单个十六进制数字，前面加0
+      }
+      MD5String += String(md5[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
     }
-    MD5String += String(md5[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
-  }
 
-#endif
+  #endif
 
   // 输出模式处理
   if(md5_mode == MD5_LOWERCASE_32L)
@@ -479,69 +542,115 @@ int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mo
 
 
 
-/* MD5计算函数
+/* SHA1计算函数
  * @param input 待计算的数据
- * @param md5_mode MD5输出模式，可选大小写模式，16/32长度模式
- * @return MD5String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
+ * @param SHA1_mode SHA1输出模式，可选大小写模式
+ * @return SHA1String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
-String qe_MD5(char *input,QE_MD5_MODE md5_mode)
-{
-#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
-  // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
-  MD5Builder md5;
-  md5.begin();
-  md5.add(String(input));
-  md5.calculate();
-  String MD5String = md5.toString();
+String qe_SHA1(char *input,QE_SHA1_MODE sha1_mode){
+  unsigned char sha1[20];
+  SHA1((unsigned char *)input,strlen(input),sha1);
 
-#else
-  MD5_CTX md5_calc;
-  unsigned char md5[16];
-
-  // 计算MD5
-  MD5_Init(&md5_calc);
-	MD5_Update(&md5_calc,(unsigned char *)input,strlen(input));
-	MD5_Final(md5,&md5_calc);
-  
   // 将输出结果转换为16进制字符串
-  String MD5String = "";
-  for (int i = 0; i < 16; i++) {
-    if (md5[i] < 0x10) {
-      MD5String += "0"; // 如果是单个十六进制数字，前面加0
+  String SHA1String = "";
+  for (int i = 0; i < 20; i++) {
+    if (sha1[i] < 0x10) {
+      SHA1String += "0"; // 如果是单个十六进制数字，前面加0
     }
-    MD5String += String(md5[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+    SHA1String += String(sha1[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
   }
-
-#endif
 
   // 输出模式处理
-  if(md5_mode == MD5_LOWERCASE_32L)
+  if(sha1_mode == SHA1_LOWERCASE)
   {
-    return MD5String;
+    return SHA1String;
   }
 
-  if(md5_mode == MD5_UPPERCASE_32L)
+  if(sha1_mode == SHA1_UPPERCASE)
   {
-    MD5String.toUpperCase();
-    return MD5String;
+    SHA1String.toUpperCase();
+    return SHA1String;
   }
 
-  if(md5_mode == MD5_LOWERCASE_16L)
-  {
-    if (MD5String.length() != 32) {return "ERROR";}
-    MD5String = MD5String.substring(8, 24);
-    return MD5String;
-  }
-
-  if(md5_mode == MD5_UPPERCASE_16L)
-  {
-    if (MD5String.length() != 32) {return "ERROR";}
-    MD5String = MD5String.substring(8, 24);
-    MD5String.toUpperCase();
-    return MD5String;
-  }
   else return "NULL";
 }
 
 
 
+/* SHA1计算函数 String输入输出
+ * @param input 待计算的数据
+ * @param sha1_mode SHA1输出模式，可选大小写模式
+ * @return SHA1String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
+ */
+String qe_SHA1_str(String input, QE_SHA1_MODE sha1_mode){
+  if(input.length() > SHA1_INPUT_MAX) return "ERROR"; // 如果传入字符串超过最大输入上限则返回
+
+  unsigned char sha1[20];
+  char input_char[SHA1_INPUT_MAX  + 1]= {};
+
+  input.toCharArray(input_char, input.length() + 1);  // 将输入数据String类型转换为char类型
+  SHA1((unsigned char *)input_char,strlen(input_char),sha1);  // 计算SHA1
+
+  // 将输出结果转换为16进制字符串
+  String SHA1String = "";
+  for (int i = 0; i < 20; i++) {
+    if (sha1[i] < 0x10) {
+      SHA1String += "0"; // 如果是单个十六进制数字，前面加0
+    }
+    SHA1String += String(sha1[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+  }
+
+  // 输出模式处理
+  if(sha1_mode == SHA1_LOWERCASE)
+  {
+    return SHA1String;
+  }
+
+  if(sha1_mode == SHA1_UPPERCASE)
+  {
+    SHA1String.toUpperCase();
+    return SHA1String;
+  }
+
+  else return "NULL";
+}
+
+
+
+/* SHA1计算函数 char输入输出
+ * @param input 待计算的数据
+ * @param output 输出的目标数组
+ * @param outputSize 输出的目标数组的大小
+ * @param sha1_mode SHA1输出模式，可选大小写模式
+ * @return QE_RETURN_STATE 函数处理状态
+ */
+int qe_SHA1_char(char *input, char *output, size_t outputSize,QE_SHA1_MODE sha1_mode){
+  unsigned char sha1[20];
+  SHA1((unsigned char *)input,strlen(input),sha1);  // SHA1计算
+  String SHA1String = "";
+
+  // 将输出结果转换为16进制字符串
+  for (int i = 0; i < 20; i++) {
+    if (sha1[i] < 0x10) {
+      SHA1String += "0"; // 如果是单个十六进制数字，前面加0
+    }
+    SHA1String += String(sha1[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+  }
+
+  // 输出模式处理
+  if(sha1_mode == SHA1_LOWERCASE)
+  {
+    if(outputSize < 41) return ERROR_ARRAY_LENGTH; // 输出数组大小不满足
+    SHA1String.toCharArray(output, SHA1String.length() + 1); 
+    return NORMAL;
+  }
+
+  if(sha1_mode == SHA1_UPPERCASE)
+  {
+    SHA1String.toUpperCase();
+    if(outputSize < 41) return ERROR_ARRAY_LENGTH; // 输出数组大小不满足
+    SHA1String.toCharArray(output, SHA1String.length() + 1); 
+    return NORMAL;
+  }
+  else return ERROR_NULL;
+}

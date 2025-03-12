@@ -85,42 +85,6 @@ static md4_func g[3] =
 };
 
 
-// 判断主机字节序
-#if defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__)
-#define HOST_IS_LITTLE_ENDIAN
-#elif defined(__BYTE_ORDER__) && (__BYTE_ORDER__ == __ORDER_BIG_ENDIAN__)
-#define HOST_IS_BIG_ENDIAN
-#else
-// 如果无法确定字节序，则默认假设为小端字节序
-#define HOST_IS_LITTLE_ENDIAN
-#endif
-
-// 定义 le32toh 函数
-static inline uint32_t le32toh(uint32_t x) {
-#ifdef HOST_IS_LITTLE_ENDIAN
-    // 如果主机是小端字节序，则不需要转换
-    return x;
-#else
-    // 如果主机是大端字节序，则需要进行字节序转换
-    return ((x >> 24) & 0xFF) |
-           ((x >> 8) & 0xFF00) |
-           ((x << 8) & 0xFF0000) |
-           ((x << 24) & 0xFF000000);
-#endif
-}
-
-inline uint32_t htole32(uint32_t host) {
-#if defined(__AVR__) // AVR架构
-    // 如果是大端机器，则交换字节顺序
-    return ((host & 0xFF000000) >> 24) |
-           ((host & 0x00FF0000) >> 8)  |
-           ((host & 0x0000FF00) << 8)  |
-           ((host & 0x000000FF) << 24);
-#else // 假设其他架构（如ARM）默认为小端
-    return host;
-#endif
-}
-
 
 int MD4_Init(MD4_CTX *c)
 {

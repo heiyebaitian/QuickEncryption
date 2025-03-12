@@ -10,7 +10,13 @@
 #define __QE_FUNC__H
 #pragma once
 
+
 void qe_cleanse(void *ptr, size_t len);
 
+uint32_t le32toh(uint32_t val);
+uint32_t be32toh(uint32_t val);
+uint32_t htole32(uint32_t val);
+uint32_t htobe32(uint32_t val);
+bool isLittleEndian();
 
 #endif

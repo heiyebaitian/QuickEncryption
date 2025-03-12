@@ -18,6 +18,7 @@
 #include "md2.h"
 #include "md4.h"
 #include "md5.h"
+#include "sha1.h"
 
 /* MD5计算加速优化 */
 #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
@@ -31,6 +32,7 @@
 #define MD2_INPUT_MAX 64
 #define MD4_INPUT_MAX 64
 #define MD5_INPUT_MAX 64
+#define SHA1_INPUT_MAX 64
 
 
 
@@ -54,7 +56,10 @@ typedef enum
       MD5_LOWERCASE_32L=1, MD5_UPPERCASE_32L, MD5_LOWERCASE_16L, MD5_UPPERCASE_16L
 } QE_MD5_MODE;
 
-
+typedef enum
+{
+      SHA1_LOWERCASE=1, SHA1_UPPERCASE
+} QE_SHA1_MODE;
 
 
 String qe_MD2(char *input,QE_MD2_MODE md2_mode);
@@ -69,6 +74,8 @@ String qe_MD5(char *input,QE_MD5_MODE md5_mode);
 String qe_MD5_str(String input,QE_MD5_MODE md5_mode);
 int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mode);
 
-
+String qe_SHA1(char *input,QE_SHA1_MODE sha1_mode);
+String qe_SHA1_str(String input, QE_SHA1_MODE sha1_mode);
+int qe_SHA1_char(char *input, char *output, size_t outputSize,QE_SHA1_MODE sha1_mode);
 
 #endif //QUICK_ENCRYPTION_H  
