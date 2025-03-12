@@ -133,7 +133,7 @@ int QE_Benchmark(){
 
 void setup() {
   // put your setup code here, to run once:
-  Serial.begin(921600);
+  Serial.begin(115200);
   delay(2000);
 
   if(self_checking() != 0)

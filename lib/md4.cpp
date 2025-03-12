@@ -11,20 +11,6 @@
 #include "func.h"
 #include "md4.h"
 
-//#define DEBUG
-
-#ifdef DEBUG
-#define DBG(...) printf(__VA_ARGS__)
-#define DUMP_BLOCK_DATA 1
-#define DUMP_BLOCK_HASH 1
-#define DUMP_ROUND_DATA 1
-#else
-#define DBG(...)
-#define DUMP_BLOCK_DATA 0
-#define DUMP_BLOCK_HASH 0
-#define DUMP_ROUND_DATA 0
-#endif
-
 #define MD4_BLOCK_SIZE          64  /* 512 bits = 64 bytes */
 #define MD4_LEN_SIZE            8   /*  64 bits =  8 bytes */
 #define MD4_LEN_OFFSET          (MD4_BLOCK_SIZE - MD4_LEN_SIZE)
@@ -177,16 +163,11 @@ static int MD4_PrepareScheduleWord(const unsigned char *block, uint32_t *X)
     return ERR_OK;
 }
 
-#if (DUMP_ROUND_DATA == 1)
-#define MD4_OP(a,b,c,d,k,s) \
-    a = ROTL(a + (g[idx/16])(b, c, d) + X[k] + T[idx/16], s); \
-    DBG("      %02d: a=0x%08x, b=0x%08x, c=0x%08x, d=0x%08x, X=0x%08x, T=0x%08x\n", idx, a, b, c, d, X[k], T[idx/16]); \
-    idx ++;
-#else
+
 #define MD4_OP(a,b,c,d,k,s) \
     a = ROTL(a + (g[idx/16])(b, c, d) + X[k] + T[idx/16], s); \
     idx ++;
-#endif
+
 
 /* Process Message in 16-Word Blocks, refer rfc1320, section 3.4 */
 static int MD4_ProcessBlock(MD4_CTX *ctx, const void *block)
@@ -200,17 +181,6 @@ static int MD4_ProcessBlock(MD4_CTX *ctx, const void *block)
         return ERR_INV_PARAM;
     }
 
-#if (DUMP_BLOCK_DATA == 1)
-    DBG("---------------------------------------------------------\n");
-    DBG("   BLOCK: %llu\n", ctx->total/HASH_BLOCK_SIZE);
-    DBG("    DATA:\n");
-    print_buffer(block, HASH_BLOCK_SIZE, "    ");
-#endif
-
-#if (DUMP_BLOCK_HASH == 1)
-    DBG("  (LE)IV: %08x %08x %08x %08x\n",
-        ctx->hash.a, ctx->hash.b, ctx->hash.c, ctx->hash.d);
-#endif
 
     /* Copy block into X */
     MD4_PrepareScheduleWord(static_cast<const unsigned char*>(block), X);
@@ -245,10 +215,6 @@ static int MD4_ProcessBlock(MD4_CTX *ctx, const void *block)
     ctx->hash.c += C;
     ctx->hash.d += D;
 
-#if (DUMP_BLOCK_HASH == 1)
-    DBG(" (LE)OUT: %08x %08x %08x %08x\n",
-        ctx->hash.a, ctx->hash.b, ctx->hash.c, ctx->hash.d);
-#endif
 
     return ERR_OK;
 }
