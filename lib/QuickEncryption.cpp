@@ -340,7 +340,7 @@ int qe_MD4_char(char *input, char *output, size_t outputSize,QE_MD4_MODE md4_mod
  * @return MD5String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
 String qe_MD5(char *input,QE_MD5_MODE md5_mode){
-  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_HWA_METHOD == 1
+  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3 || CONFIG_IDF_TARGET_ESP32S2) && QE_HWA_METHOD == 1
     // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
     MD5Builder md5;
     md5.begin();
@@ -405,7 +405,7 @@ String qe_MD5(char *input,QE_MD5_MODE md5_mode){
  * @return MD5String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
 String qe_MD5_str(String input,QE_MD5_MODE md5_mode){
-  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_HWA_METHOD == 1
+  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3 || CONFIG_IDF_TARGET_ESP32S2) && QE_HWA_METHOD == 1
   // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
     MD5Builder md5;
     md5.begin();
@@ -475,7 +475,7 @@ String qe_MD5_str(String input,QE_MD5_MODE md5_mode){
  * @return QE_RETURN_STATE 函数处理状态
  */
 int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mode){
-  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_HWA_METHOD == 1
+  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3 || CONFIG_IDF_TARGET_ESP32S2) && QE_HWA_METHOD == 1
     // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
     MD5Builder md5;
     md5.begin();
@@ -548,7 +548,7 @@ int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mo
  * @return SHA1String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
 String qe_SHA1(char *input, QE_SHA1_MODE sha1_mode){
-  #if (PICO_RP2040 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
+  #if (PICO_RP2040 || PICO_RP2350 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
     String SHA1String = sha1(String(input));
 
   #else
@@ -589,7 +589,7 @@ String qe_SHA1(char *input, QE_SHA1_MODE sha1_mode){
  * @return SHA1String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
 String qe_SHA1_str(String input, QE_SHA1_MODE sha1_mode){
-  #if (PICO_RP2040 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
+  #if (PICO_RP2040 || PICO_RP2350 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
     String SHA1String = sha1(input);
 
   #else
@@ -637,7 +637,7 @@ String qe_SHA1_str(String input, QE_SHA1_MODE sha1_mode){
  * @return QE_RETURN_STATE 函数处理状态
  */
 int qe_SHA1_char(char *input, char *output, size_t outputSize,QE_SHA1_MODE sha1_mode){
-  #if (PICO_RP2040 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
+  #if (PICO_RP2040 || PICO_RP2350 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
     String SHA1String = sha1(String(input));
 
   #else

@@ -18,27 +18,34 @@
 
 #include "md2.h"
 #include "md4.h"
-#include "md5.h"
-#include "sha1.h"
+
+
 
 /* MD5计算加速优化
  * 现已支持:
- *  - ESP32系列:ESP32S3 | ESP32C3
+ *  - ESP32系列:ESP32S3 | ESP32S2 | ESP32C3
  */
-#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_HWA_METHOD == 1
-  // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
-  #warning You have enabled the ESP32-specific MD5 method, which is in the experimental stage. Do not enable this unless you understand the consequences of doing so.
+#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3 || CONFIG_IDF_TARGET_ESP32S2) && QE_HWA_METHOD == 1
+  // 如果目标平台是 ESP32
+  #warning You have enabled the ESP32-specific MD5 method. Please confirm that you are aware of the consequences of enabling this feature.
   #include "MD5Builder.h"
+#else
+  //使用默认方法
+  #include "md5.h"
+
 #endif
 
 /* SHA1计算加速优化
  * 现已支持:
  *  - RP系列:RP2040 | RP2350A/B
  */
-#if (PICO_RP2040 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
-  // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
-  #warning You have enabled the RP-specific SHA1 method, which is in the experimental stage. Do not enable this unless you understand the consequences of doing so.
+#if (PICO_RP2040 || PICO_RP2350 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
+  // 如果目标平台是 RP
+  #warning You have enabled the RP-specific SHA1 method. Please confirm that you are aware of the consequences of enabling this feature.
   #include <Hash.h>
+#else
+  //使用默认方法
+  #include "sha1.h"
 #endif
 
 
