@@ -340,7 +340,7 @@ int qe_MD4_char(char *input, char *output, size_t outputSize,QE_MD4_MODE md4_mod
  * @return MD5String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
 String qe_MD5(char *input,QE_MD5_MODE md5_mode){
-  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_HWA_METHOD == 1
     // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
     MD5Builder md5;
     md5.begin();
@@ -405,7 +405,7 @@ String qe_MD5(char *input,QE_MD5_MODE md5_mode){
  * @return MD5String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
 String qe_MD5_str(String input,QE_MD5_MODE md5_mode){
-  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_HWA_METHOD == 1
   // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
     MD5Builder md5;
     md5.begin();
@@ -414,7 +414,7 @@ String qe_MD5_str(String input,QE_MD5_MODE md5_mode){
     String MD5String = md5.toString();
 
   #else
-  if(input.length() > MD5_INPUT_MAX) return "ERROR"; // 如果传入字符串超过最大输入上限则返回
+    if(input.length() > MD5_INPUT_MAX) return "ERROR"; // 如果传入字符串超过最大输入上限则返回
     MD5_CTX md5_calc;
     unsigned char md5[16];
     char input_char[MD5_INPUT_MAX  + 1]= {};
@@ -475,7 +475,7 @@ String qe_MD5_str(String input,QE_MD5_MODE md5_mode){
  * @return QE_RETURN_STATE 函数处理状态
  */
 int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mode){
-  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+  #if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_HWA_METHOD == 1
     // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
     MD5Builder md5;
     md5.begin();
@@ -547,18 +547,24 @@ int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mo
  * @param SHA1_mode SHA1输出模式，可选大小写模式
  * @return SHA1String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
-String qe_SHA1(char *input,QE_SHA1_MODE sha1_mode){
-  unsigned char sha1[20];
-  SHA1((unsigned char *)input,strlen(input),sha1);
+String qe_SHA1(char *input, QE_SHA1_MODE sha1_mode){
+  #if (PICO_RP2040 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
+    String SHA1String = sha1(String(input));
 
-  // 将输出结果转换为16进制字符串
-  String SHA1String = "";
-  for (int i = 0; i < 20; i++) {
-    if (sha1[i] < 0x10) {
-      SHA1String += "0"; // 如果是单个十六进制数字，前面加0
+  #else
+    unsigned char sha1[20];
+    SHA1((unsigned char *)input,strlen(input),sha1);
+
+    // 将输出结果转换为16进制字符串
+    String SHA1String = "";
+    for (int i = 0; i < 20; i++) {
+     if (sha1[i] < 0x10) {
+        SHA1String += "0"; // 如果是单个十六进制数字，前面加0
+      }
+      SHA1String += String(sha1[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
     }
-    SHA1String += String(sha1[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
-  }
+
+  #endif
 
   // 输出模式处理
   if(sha1_mode == SHA1_LOWERCASE)
@@ -583,22 +589,28 @@ String qe_SHA1(char *input,QE_SHA1_MODE sha1_mode){
  * @return SHA1String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
  */
 String qe_SHA1_str(String input, QE_SHA1_MODE sha1_mode){
-  if(input.length() > SHA1_INPUT_MAX) return "ERROR"; // 如果传入字符串超过最大输入上限则返回
+  #if (PICO_RP2040 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
+    String SHA1String = sha1(input);
 
-  unsigned char sha1[20];
-  char input_char[SHA1_INPUT_MAX  + 1]= {};
+  #else
+    if(input.length() > SHA1_INPUT_MAX) return "ERROR"; // 如果传入字符串超过最大输入上限则返回
 
-  input.toCharArray(input_char, input.length() + 1);  // 将输入数据String类型转换为char类型
-  SHA1((unsigned char *)input_char,strlen(input_char),sha1);  // 计算SHA1
+    unsigned char sha1[20];
+    char input_char[SHA1_INPUT_MAX  + 1]= {};
 
-  // 将输出结果转换为16进制字符串
-  String SHA1String = "";
-  for (int i = 0; i < 20; i++) {
-    if (sha1[i] < 0x10) {
-      SHA1String += "0"; // 如果是单个十六进制数字，前面加0
+    input.toCharArray(input_char, input.length() + 1);  // 将输入数据String类型转换为char类型
+    SHA1((unsigned char *)input_char,strlen(input_char),sha1);  // 计算SHA1
+
+    // 将输出结果转换为16进制字符串
+    String SHA1String = "";
+    for (int i = 0; i < 20; i++) {
+      if (sha1[i] < 0x10) {
+        SHA1String += "0"; // 如果是单个十六进制数字，前面加0
+      }
+      SHA1String += String(sha1[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
     }
-    SHA1String += String(sha1[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
-  }
+
+  #endif
 
   // 输出模式处理
   if(sha1_mode == SHA1_LOWERCASE)
@@ -625,17 +637,23 @@ String qe_SHA1_str(String input, QE_SHA1_MODE sha1_mode){
  * @return QE_RETURN_STATE 函数处理状态
  */
 int qe_SHA1_char(char *input, char *output, size_t outputSize,QE_SHA1_MODE sha1_mode){
-  unsigned char sha1[20];
-  SHA1((unsigned char *)input,strlen(input),sha1);  // SHA1计算
-  String SHA1String = "";
+  #if (PICO_RP2040 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
+    String SHA1String = sha1(String(input));
 
-  // 将输出结果转换为16进制字符串
-  for (int i = 0; i < 20; i++) {
-    if (sha1[i] < 0x10) {
-      SHA1String += "0"; // 如果是单个十六进制数字，前面加0
+  #else
+    unsigned char sha1[20];
+    SHA1((unsigned char *)input,strlen(input),sha1);  // SHA1计算
+    String SHA1String = "";
+
+    // 将输出结果转换为16进制字符串
+    for (int i = 0; i < 20; i++) {
+      if (sha1[i] < 0x10) {
+        SHA1String += "0"; // 如果是单个十六进制数字，前面加0
+      }
+      SHA1String += String(sha1[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
     }
-    SHA1String += String(sha1[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
-  }
+
+  #endif
 
   // 输出模式处理
   if(sha1_mode == SHA1_LOWERCASE)

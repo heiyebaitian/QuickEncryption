@@ -7,6 +7,7 @@
 
 #ifndef __QE_SHA1__H
 #define __QE_SHA1__H
+#pragma once
 
 #define ERR_OK           0
 #define ERR_ERR         -1  /* generic error */

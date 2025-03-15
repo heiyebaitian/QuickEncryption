@@ -9,8 +9,9 @@
 // QuickEncryption.h
 #ifndef __QUICK_ENCRYPTION__H  
 #define __QUICK_ENCRYPTION__H
+#pragma once
 
-#define QE_ESP32_METHOD 0
+#define QE_HWA_METHOD 1
 
 #include <Arduino.h>
 #include <stdint.h>
@@ -20,11 +21,24 @@
 #include "md5.h"
 #include "sha1.h"
 
-/* MD5计算加速优化 */
-#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_ESP32_METHOD == 1
+/* MD5计算加速优化
+ * 现已支持:
+ *  - ESP32系列:ESP32S3 | ESP32C3
+ */
+#if (CONFIG_IDF_TARGET_ESP32C3 || CONFIG_IDF_TARGET_ESP32S3) && QE_HWA_METHOD == 1
   // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
   #warning You have enabled the ESP32-specific MD5 method, which is in the experimental stage. Do not enable this unless you understand the consequences of doing so.
   #include "MD5Builder.h"
+#endif
+
+/* SHA1计算加速优化
+ * 现已支持:
+ *  - RP系列:RP2040 | RP2350A/B
+ */
+#if (PICO_RP2040 || PICO_RP2350A || PICO_RP2350B) && QE_HWA_METHOD == 1
+  // 如果目标平台是 ESP32C3 或 ESP32S3 且定义了ESP32方法
+  #warning You have enabled the RP-specific SHA1 method, which is in the experimental stage. Do not enable this unless you understand the consequences of doing so.
+  #include <Hash.h>
 #endif
 
 
