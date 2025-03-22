@@ -672,3 +672,118 @@ int qe_SHA1_char(char *input, char *output, size_t outputSize,QE_SHA1_MODE sha1_
   }
   else return ERROR_NULL;
 }
+
+
+
+/* SHA256计算函数
+ * @param input 待计算的数据
+ * @param SHA256_mode SHA256输出模式，可选大小写模式
+ * @return SHA256String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
+ */
+String qe_SHA256(char *input, QE_SHA256_MODE sha256_mode){
+  unsigned char sha256[32];
+  SHA256((unsigned char *)input,strlen(input),sha256);
+
+  // 将输出结果转换为16进制字符串
+  String SHA256String = "";
+  for (int i = 0; i < 32; i++) {
+    if (sha256[i] < 0x10) {
+      SHA256String += "0"; // 如果是单个十六进制数字，前面加0
+    }
+    SHA256String += String(sha256[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+  }
+
+  // 输出模式处理
+  if(sha256_mode == SHA256_LOWERCASE)
+  {
+    return SHA256String;
+  }
+
+  if(sha256_mode == SHA256_UPPERCASE)
+  {
+    SHA256String.toUpperCase();
+    return SHA256String;
+  }
+
+  else return "NULL";
+}
+
+
+
+/* SHA256计算函数 String输入输出
+ * @param input 待计算的数据
+ * @param sha256_mode SHA256输出模式，可选大小写模式
+ * @return SHA256String 计算结果,如发生错误则输出"ERROR",如计算失败则输出"NULL"
+ */
+String qe_SHA256_str(String input, QE_SHA256_MODE sha256_mode){
+  if(input.length() > SHA256_INPUT_MAX) return "ERROR"; // 如果传入字符串超过最大输入上限则返回
+
+  unsigned char sha256[32];
+  char input_char[SHA256_INPUT_MAX  + 1]= {};
+
+  input.toCharArray(input_char, input.length() + 1);  // 将输入数据String类型转换为char类型
+  SHA256((unsigned char *)input_char,strlen(input_char),sha256);  // 计算SHA256
+
+  // 将输出结果转换为16进制字符串
+  String SHA256String = "";
+  for (int i = 0; i < 32; i++) {
+    if (sha256[i] < 0x10) {
+      SHA256String += "0"; // 如果是单个十六进制数字，前面加0
+    }
+    SHA256String += String(sha256[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+  }
+
+  // 输出模式处理
+  if(sha256_mode == SHA256_LOWERCASE)
+  {
+    return SHA256String;
+  }
+
+  if(sha256_mode == SHA256_UPPERCASE)
+  {
+    SHA256String.toUpperCase();
+    return SHA256String;
+  }
+
+  else return "NULL";
+}
+
+
+
+/* SHA256计算函数 char输入输出
+ * @param input 待计算的数据
+ * @param output 输出的目标数组
+ * @param outputSize 输出的目标数组的大小
+ * @param sha256_mode SHA256输出模式，可选大小写模式
+ * @return QE_RETURN_STATE 函数处理状态
+ */
+int qe_SHA256_char(char *input, char *output, size_t outputSize,QE_SHA256_MODE sha256_mode){
+  unsigned char sha256[32];
+  SHA256((unsigned char *)input,strlen(input),sha256);  // SHA256计算
+  String SHA256String = "";
+
+  // 将输出结果转换为16进制字符串
+  for (int i = 0; i < 32; i++) {
+    if (sha256[i] < 0x10) {
+      SHA256String += "0"; // 如果是单个十六进制数字，前面加0
+    }
+    SHA256String += String(sha256[i], HEX); // 将每个字节转换为两位十六进制数并追加到字符串
+  }
+
+  // 输出模式处理
+  if(sha256_mode == SHA256_LOWERCASE)
+  {
+    if(outputSize < 41) return ERROR_ARRAY_LENGTH; // 输出数组大小不满足
+    SHA256String.toCharArray(output, SHA256String.length() + 1); 
+    return NORMAL;
+  }
+
+  if(sha256_mode == SHA256_UPPERCASE)
+  {
+    SHA256String.toUpperCase();
+    if(outputSize < 41) return ERROR_ARRAY_LENGTH; // 输出数组大小不满足
+    SHA256String.toCharArray(output, SHA256String.length() + 1); 
+    return NORMAL;
+  }
+  else return ERROR_NULL;
+}

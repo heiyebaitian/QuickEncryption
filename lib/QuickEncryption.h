@@ -18,6 +18,7 @@
 
 #include "md2.h"
 #include "md4.h"
+#include "sha256.h"
 
 
 
@@ -54,6 +55,7 @@
 #define MD4_INPUT_MAX 64
 #define MD5_INPUT_MAX 64
 #define SHA1_INPUT_MAX 64
+#define SHA256_INPUT_MAX 64
 
 
 
@@ -82,6 +84,11 @@ typedef enum
       SHA1_LOWERCASE=1, SHA1_UPPERCASE
 } QE_SHA1_MODE;
 
+typedef enum
+{
+      SHA256_LOWERCASE=1, SHA256_UPPERCASE
+} QE_SHA256_MODE;
+
 
 String qe_MD2(char *input,QE_MD2_MODE md2_mode);
 String qe_MD2_str(String input,QE_MD2_MODE md2_mode);
@@ -98,5 +105,9 @@ int qe_MD5_char(char *input, char *output, size_t outputSize, QE_MD5_MODE md5_mo
 String qe_SHA1(char *input,QE_SHA1_MODE sha1_mode);
 String qe_SHA1_str(String input, QE_SHA1_MODE sha1_mode);
 int qe_SHA1_char(char *input, char *output, size_t outputSize,QE_SHA1_MODE sha1_mode);
+
+String qe_SHA256(char *input, QE_SHA256_MODE sha256_mode);
+String qe_SHA256_str(String input, QE_SHA256_MODE sha256_mode);
+int qe_SHA256_char(char *input, char *output, size_t outputSize,QE_SHA256_MODE sha256_mode);
 
 #endif //QUICK_ENCRYPTION_H  
