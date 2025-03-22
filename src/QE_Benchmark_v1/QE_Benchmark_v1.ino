@@ -10,8 +10,8 @@
  * 本程序提供了QuickEncryption库的多项基准测试功能，您可以使用此程序快速对目标平台的基准性能进行评估
  * 本程序将配合QuickEncryption库同步更新，您在编译本程序前请确保库版本为最新版本，以避免产生性能误差
  * 较新的库版本可能会提供更好的性能优化、安全优化、硬件加速适配等内容
- * 更新日期：2025年3月12日
- * 建议 QuickEncryption 版本：v0.1.0
+ * 更新日期：2025年3月22日
+ * 最低要求 QuickEncryption 版本：v0.2.0
  */
 
 #include<Arduino.h>
@@ -23,6 +23,7 @@
 #define MD4_CYCLE_NUMBER 20000
 #define MD5_CYCLE_NUMBER 20000
 #define SHA1_CYCLE_NUMBER 20000
+#define SHA256_CYCLE_NUMBER 20000
 
 
 /* 自检测试
@@ -35,6 +36,7 @@ int self_checking(){
   const String md4_ev = "1dda25c7373a4023981b27252046474d";
   const String md5_ev = "1cc6e3b39dc22371248d9d362a36f36d";
   const String sha1_ev = "cab391c07482239cd0bdccec8185d2e6f89509f1";
+  const String sha256_ev = "9b0a201632faea9b9a5c8c2db792ebb321ebb0c8a8abba506174f70db920dc98";
 
   if(qe_MD2(text1,MD2_LOWERCASE_32L) != md2_ev) 
   {
@@ -69,6 +71,15 @@ int self_checking(){
     Serial.printf("Source text:%s\n", text1);
     Serial.println("Expected value:" + sha1_ev);
     Serial.println("Actual value:" + qe_SHA1(text1,SHA1_LOWERCASE));
+    return 1;
+  }
+
+  if(qe_SHA256(text1,SHA256_LOWERCASE) != sha256_ev)
+  {
+    Serial.print("[QE_Benchmark] SHA256 Self-check error!\n");
+    Serial.printf("Source text:%s\n", text1);
+    Serial.println("Expected value:" + sha256_ev);
+    Serial.println("Actual value:" + qe_SHA256(text1,SHA256_LOWERCASE));
     return 1;
   }
 
@@ -187,6 +198,27 @@ int QE_Benchmark(){
   SHA1_time = micros() - SHA1_time;
   SHA1_rate = (TEXT_LENGTH * SHA1_CYCLE_NUMBER * 2 / 1024.0) / (SHA1_time/1000000.0); // 计算速率
   Serial.printf("SHA1:%.2lf KB/s\n",SHA1_rate);
+
+  /* SHA256 测试*/
+  // 测试前预热
+  for(int i=0; i <= WARM_UP_CYCLE_NUMBER; i++){
+    text = RandomString(TEXT_LENGTH); // 生成长度 TEXT_LENGTH 的随机字符串
+    text.toCharArray(char_text, text.length() + 1); 
+    buffer = qe_SHA256( char_text, SHA256_LOWERCASE); // 计算SHA256值存入缓冲区
+    if(buffer != qe_SHA256( char_text, SHA256_LOWERCASE)) return 1; // 再次计算并校验结果
+  }
+
+  unsigned long SHA256_time = micros();
+  double SHA256_rate = 0;
+  for(int i=0; i <= SHA256_CYCLE_NUMBER; i++){
+    text = RandomString(TEXT_LENGTH); // 生成长度 TEXT_LENGTH 的随机字符串
+    text.toCharArray(char_text, text.length() + 1); 
+    buffer = qe_SHA256( char_text, SHA256_LOWERCASE); // 计算SHA256值存入缓冲区
+    if(buffer != qe_SHA256( char_text, SHA256_LOWERCASE)) return 1; // 再次计算并校验结果
+  }
+  SHA256_time = micros() - SHA256_time;
+  SHA256_rate = (TEXT_LENGTH * SHA256_CYCLE_NUMBER * 2 / 1024.0) / (SHA256_time/1000000.0); // 计算速率
+  Serial.printf("SHA256:%.2lf KB/s\n",SHA256_rate);
 
   Serial.printf("-----------------------------------\n");
   return 0;
